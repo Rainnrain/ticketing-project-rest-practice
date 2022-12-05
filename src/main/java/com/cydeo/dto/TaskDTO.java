@@ -1,6 +1,7 @@
 package com.cydeo.dto;
 
 import com.cydeo.enums.Status;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,9 @@ public class TaskDTO {
     @NotBlank
     private String taskDetail;
 
+    @JsonProperty(access=JsonProperty.Access.READ_ONLY)
     private Status taskStatus;
+    @JsonProperty(access=JsonProperty.Access.READ_ONLY)
     private LocalDate assignedDate;
 
 }
