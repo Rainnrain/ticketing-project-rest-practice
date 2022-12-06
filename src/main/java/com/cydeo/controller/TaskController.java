@@ -14,7 +14,7 @@ import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/vi/task")
+@RequestMapping("/api/v1/task")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TaskController {
 

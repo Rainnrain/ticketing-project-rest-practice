@@ -13,7 +13,7 @@ import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/vi/project")
+@RequestMapping("/api/v1/project")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProjectController {
 
