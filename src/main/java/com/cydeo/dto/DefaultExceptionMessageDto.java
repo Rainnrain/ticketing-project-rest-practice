@@ -9,5 +9,5 @@ import lombok.Setter;
 @Builder
 public class DefaultExceptionMessageDto {
 
-    private String message;
+    private String message; // This gets the message from the annotation we use
 }
