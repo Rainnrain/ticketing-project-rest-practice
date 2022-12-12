@@ -36,6 +36,7 @@ public class UserController {
        return ResponseEntity.ok(new ResponseWrapper("User list", userDTOList, HttpStatus.OK));
     }
 
+    @ExecutionTime
     @GetMapping("/{userName}")
     @RolesAllowed( "Admin")
     @Operation(summary="Get user by name")

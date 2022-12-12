@@ -23,18 +23,18 @@ public class LoggingAspect {
         return userDetails.getKeycloakSecurityContext().getToken().getPreferredUsername();
     }
 
-    @Pointcut("execution(* com.cydeo.controller.ProjectController.*(..))|| execution(* com.cydeo.controller.TaskController.*(..)) ")
+    @Pointcut("execution(* com.cydeo.controller.ProjectController.*(..)) || execution(* com.cydeo.controller.TaskController.*(..)) ")
     public void anyProjectAndTaskControllerPC() {
     }
 
-    @Before("anyProjectAndTaskControllerPC()")
+    @Before("anyProjectAndTaskControllerPC()")// Shows who is trying to do operations in Task or project controller
     public void beforeAnyProjectAndTaskControllerAdvice(JoinPoint joinPoint) {
         log.info("Before -> Method: {}, User: {}"
-                , joinPoint.getSignature().toShortString()
-                , getUsername());
+                , joinPoint.getSignature().toShortString() // method name
+                , getUsername()); // username taken from security context
     }
 
-    @AfterReturning(pointcut = "anyProjectAndTaskControllerPC()", returning = "results")
+    @AfterReturning(pointcut = "anyProjectAndTaskControllerPC()", returning = "results") //results after method execution will be logged
     public void afterReturningAnyProjectAndTaskControllerAdvice(JoinPoint joinPoint, Object results) {
         log.info("Before -> Method: {}, User: {} Results: {}"
                 , joinPoint.getSignature().toShortString()
@@ -42,7 +42,7 @@ public class LoggingAspect {
                 , results.toString());
     }
 
-    @AfterThrowing(pointcut = "anyProjectAndTaskControllerPC()", throwing = "exception")
+    @AfterThrowing(pointcut = "anyProjectAndTaskControllerPC()", throwing = "exception") // if task or project controller has an exception this method will run
     public void afterThrowingAnyProjectAndTaskControllerAdvice(JoinPoint joinPoint, Exception exception) {
         log.info("Before -> Method: {}, User: {} Results: {}"
                 , joinPoint.getSignature().toShortString()

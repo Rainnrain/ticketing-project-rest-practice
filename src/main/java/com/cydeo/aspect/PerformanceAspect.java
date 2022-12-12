@@ -5,11 +5,12 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Slf4j
-@Component
+@Configuration
 public class PerformanceAspect {
     @Pointcut("@annotation(com.cydeo.annotation.ExecutionTime)")
     public void executionTimePC() {
@@ -18,13 +19,14 @@ public class PerformanceAspect {
     @Around("executionTimePC()")
     public Object aroundAnyExecutionTimeAdvice(ProceedingJoinPoint proceedingJoinPoint) {
         long beforeTime = System.currentTimeMillis();
-        Object result = null;
+        Object result=null;
         log.info("Execution starts:");
 
         try {
             result = proceedingJoinPoint.proceed();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
+
         }
         long afterTimem=System.currentTimeMillis();
         log.info("Time taken to execute: {} ms - Method: {}",
