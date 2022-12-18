@@ -6,6 +6,8 @@ import com.cydeo.dto.UserDTO;
 import com.cydeo.enums.Status;
 import com.cydeo.service.TaskService;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/task")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Tag(name="TaskController", description="Task API")
 public class TaskController {
 
     private final TaskService taskService;
@@ -26,6 +29,7 @@ public class TaskController {
 
     @GetMapping
     @RolesAllowed( "Manager")
+    @Operation(summary="Get tasks")
     public ResponseEntity<ResponseWrapper> getTasks() {
         List<TaskDTO> listOfTasks = taskService.listAllTasks();
         return ResponseEntity.ok(new ResponseWrapper("task list", listOfTasks, HttpStatus.OK));
@@ -34,6 +38,7 @@ public class TaskController {
 
     @GetMapping("/{taskId}")
     @RolesAllowed( "Manager")
+    @Operation(summary="Get task by Id")
     public ResponseEntity<ResponseWrapper> getTaskById(@PathVariable("taskId") Long taskId) {
 
         TaskDTO taskdto = taskService.findById(taskId);
@@ -43,6 +48,7 @@ public class TaskController {
 
     @PostMapping
     @RolesAllowed( "Manager")
+    @Operation(summary="Create Task")
     public ResponseEntity<ResponseWrapper> createTask(@RequestBody TaskDTO taskDTO) {
         taskService.save(taskDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseWrapper("task created", HttpStatus.CREATED));
@@ -51,6 +57,7 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     @RolesAllowed( "Manager")
+    @Operation(summary="Delete Task")
     public ResponseEntity<ResponseWrapper> deleteTask(@PathVariable("id") Long id) {
         taskService.delete(id);
         return ResponseEntity.ok(new ResponseWrapper("task deleted", HttpStatus.OK));
@@ -58,6 +65,7 @@ public class TaskController {
 
     @PutMapping// this is the method the manager will use to update
     @RolesAllowed( "Manager")
+    @Operation(summary="Update Task")
     public ResponseEntity<ResponseWrapper> updateTask(@RequestBody TaskDTO taskDTO) {
         taskService.update(taskDTO);
         return ResponseEntity.ok(new ResponseWrapper("Task updated", HttpStatus.OK));
