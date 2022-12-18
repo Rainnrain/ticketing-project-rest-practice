@@ -54,9 +54,8 @@ public class UserServiceImpl implements UserService {
     public void save(UserDTO user) {
 
         user.setEnabled(true);
+        user.setPassWord(passwordEncoder.encode(user.getPassWord()));
         User obj = userMapper.convertToEntity(user);
-        obj.setEnabled(true);
-        obj.setPassWord(passwordEncoder.encode(obj.getPassWord()));
         keycloakService.userCreate(user);
         userRepository.save(obj);
     }
@@ -93,6 +92,7 @@ public class UserServiceImpl implements UserService {
             user.setIsDeleted(true);
             user.setUserName(user.getUserName() + "-" + user.getId());  // harold@manager.com-2
             userRepository.save(user);
+            keycloakService.delete(username);
         }else{
             throw new TicketingProjectException("User cannot be deleted");
         }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class KeycloakProperties { // getting info from application.properties by @Value
-// This info is no reusable throughout the whole application
+// This info is now reusable throughout the whole application
     @Value("${keycloak.realm}")
     private String realm;
     @Value("${keycloak.auth-server-url}")
