@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Aspect
-@Slf4j
+@Slf4j// creating logger obj
 @Configuration
 public class PerformanceAspect {
     @Pointcut("@annotation(com.cydeo.annotation.ExecutionTime)")
