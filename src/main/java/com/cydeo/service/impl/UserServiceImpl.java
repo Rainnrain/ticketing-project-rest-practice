@@ -15,6 +15,7 @@ import com.cydeo.service.UserService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,14 +51,16 @@ public class UserServiceImpl implements UserService {
         return userList.stream().map(userMapper::convertToDto).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void save(UserDTO user) {
 
         user.setEnabled(true);
         user.setPassWord(passwordEncoder.encode(user.getPassWord()));
         User obj = userMapper.convertToEntity(user);
-        keycloakService.userCreate(user);
+
         userRepository.save(obj);
+        keycloakService.userCreate(user);
     }
 
 //    @Override
@@ -93,7 +96,7 @@ public class UserServiceImpl implements UserService {
             user.setUserName(user.getUserName() + "-" + user.getId());  // harold@manager.com-2
             userRepository.save(user);
             keycloakService.delete(username);
-        }else{
+        } else {
             throw new TicketingProjectException("User cannot be deleted");
         }
 
