@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface UserService  {
 
-    UserDTO findByUserName(String username) throws TicketingProjectException;
+    UserDTO findByUserName(String username);
     List<UserDTO> listAllUsers();
     UserDTO save(UserDTO user);
 //    void deleteByUserName(String username);
-    UserDTO update(UserDTO user) throws TicketingProjectException;
-    void delete(String username) throws TicketingProjectException;
+    UserDTO update(UserDTO user);
+    void delete(String username);
     List<UserDTO> listAllByRole(String role);
 
 }

@@ -41,9 +41,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findByUserName(String username) throws TicketingProjectException {
+    public UserDTO findByUserName(String username)  {
         User user = userRepository.findByUserNameAndIsDeleted(username, false);
-        if(user==null) throw new TicketingProjectException("User not found");
+        if(user==null) throw new NoSuchElementException("User not found");
         return userMapper.convertToDto(user);
     }
 
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
 //    }
 
     @Override
-    public UserDTO update(UserDTO user) throws TicketingProjectException {
+    public UserDTO update(UserDTO user) {
 
         //Find current user
         User user1 = userRepository.findByUserNameAndIsDeleted(user.getUserName(), false);  //has id
