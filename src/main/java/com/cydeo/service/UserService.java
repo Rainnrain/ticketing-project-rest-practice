@@ -13,7 +13,7 @@ public interface UserService  {
     UserDTO save(UserDTO user);
 //    void deleteByUserName(String username);
     UserDTO update(UserDTO user);
-    void delete(String username);
+    void delete(String username) throws TicketingProjectException;
     List<UserDTO> listAllByRole(String role);
 
 }

@@ -22,6 +22,7 @@ public class TicketingProjectRestApplication {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder();
     }
 }
