@@ -78,7 +78,7 @@ public class TaskController {
        List<TaskDTO> incompleteTasks=taskService.listAllTasksByStatusIsNot(Status.COMPLETE);
         return ResponseEntity.ok(new ResponseWrapper("Incomplete Tasks",incompleteTasks, HttpStatus.OK));
     }
-
+@ExceptionHandler
     @PutMapping("/employee/update/") // this is for the employee
     @RolesAllowed( "Employee")
     public ResponseEntity<ResponseWrapper> employeeUpdateTask(@RequestBody TaskDTO taskDTO) {

@@ -1,9 +1,11 @@
 package com.cydeo.unit_test_review;
 
+import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.RoleDTO;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.Role;
 import com.cydeo.entity.User;
+import com.cydeo.exception.TicketingProjectException;
 import com.cydeo.mapper.UserMapper;
 import com.cydeo.repository.UserRepository;
 import com.cydeo.service.KeycloakService;
@@ -14,6 +16,8 @@ import com.cydeo.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -30,8 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -54,6 +58,7 @@ public class UserServiceUnitTest {
 
     User user;
     UserDTO userDTO;
+
 
     @BeforeEach
     void setUp() {
@@ -138,5 +143,65 @@ public class UserServiceUnitTest {
         UserDTO actualDTO = userService.update(userDTO);
         verify(passwordEncoder).encode(anyString());
         assertThat(actualDTO.getPassWord()).isBase64();
+    }
+
+    @Test
+    void should_delete_manager() throws TicketingProjectException {
+        User user= getUser("Manager");
+        when(userRepository.findByUserNameAndIsDeleted(anyString(), anyBoolean())).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
+        when(projectService.listAllNonCompletedByAssignedManager(any())).thenReturn(new ArrayList<>());
+        userService.delete(userDTO.getUserName());
+        assertThat(user.getIsDeleted()).isTrue();
+        assertTrue(user.getIsDeleted());
+        assertNotEquals("user3", user.getUserName());
+    }
+
+    @Test
+    void should_delete_employee() throws TicketingProjectException {
+        User user= getUser("Employee");
+        when(userRepository.findByUserNameAndIsDeleted(anyString(), anyBoolean())).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
+        when(taskService.listAllNonCompletedByAssignedEmployee(any())).thenReturn(new ArrayList<>());
+        userService.delete(userDTO.getUserName());
+        assertTrue(user.getIsDeleted());
+        assertNotEquals("user3", user.getUserName());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings={"Manager", "Employee"})
+    void should_delete_user() throws TicketingProjectException {
+        User user= getUser("Employee");
+        when(userRepository.findByUserNameAndIsDeleted(anyString(), anyBoolean())).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
+        lenient().when(taskService.listAllNonCompletedByAssignedEmployee(any())).thenReturn(new ArrayList<>());
+        lenient().when(projectService.listAllNonCompletedByAssignedManager(any())).thenReturn( List.of(new ProjectDTO()));
+        userService.delete(userDTO.getUserName());
+        assertTrue(user.getIsDeleted());
+        assertNotEquals("user3", user.getUserName());
+    }
+
+    @Test
+    void should_throw_exception_when_delete_manager() throws TicketingProjectException {
+        User user= getUser("Manager");
+        when(userRepository.findByUserNameAndIsDeleted(anyString(), anyBoolean())).thenReturn(user);
+
+        when(projectService.listAllNonCompletedByAssignedManager(any())).thenReturn( List.of(new ProjectDTO()));
+
+        Throwable throwable= catchThrowable(()-> userService.delete(userDTO.getUserName()));
+        assertInstanceOf(TicketingProjectException.class, throwable);
+
+        assertEquals("User cannot be deleted", throwable.getMessage());
+        verify(userMapper, atLeastOnce()).convertToDto(any());
+    }
+
+    private User getUser(String role){
+        User user3= new User();
+
+        user3.setUserName("user3");
+        user3.setEnabled(false);
+        user3.setIsDeleted(false);
+        user3.setRole(new Role(role));
+        return user3;
     }
 }
